@@ -9,6 +9,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+
 # convert an array of values into a dataset matrix
 def create_dataset(dataset, look_back=1):
 	dataX, dataY = [], []
@@ -17,8 +18,10 @@ def create_dataset(dataset, look_back=1):
 		dataX.append(a)
 		dataY.append(dataset[i + look_back, 0])
 	return np.array(dataX), np.array(dataY)
+
 # fix random seed for reproducibility
 tf.random.set_seed(7)
+
 # load the dataset
 dataframe = read_csv('airline-passengers.csv', usecols=[1], engine='python')
 dataset = dataframe.values
@@ -43,6 +46,10 @@ model.add(LSTM(4, input_shape=(1, look_back)))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
 model.fit(trainX, trainY, epochs=100, batch_size=1, verbose=2)
+
+
+
+
 # make predictions
 trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
@@ -56,6 +63,7 @@ trainScore = np.sqrt(mean_squared_error(trainY[0], trainPredict[:,0]))
 print('Train Score: %.2f RMSE' % (trainScore))
 testScore = np.sqrt(mean_squared_error(testY[0], testPredict[:,0]))
 print('Test Score: %.2f RMSE' % (testScore))
+
 # shift train predictions for plotting
 trainPredictPlot = np.empty_like(dataset)
 trainPredictPlot[:, :] = np.nan
